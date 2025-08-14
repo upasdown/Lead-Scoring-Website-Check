@@ -1,0 +1,26 @@
+:root {
+  --glass-bg: rgba(255,255,255,0.12);
+  --glass-border: rgba(255,255,255,0.2);
+}
+body {
+  background: radial-gradient(1200px 800px at 10% 10%, rgba(0, 247, 255, 0.1), rgba(0,0,0,0)) ,
+              radial-gradient(1200px 800px at 90% 20%, rgba(255, 0, 153, 0.08), rgba(0,0,0,0)),
+              linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0b1220 100%);
+  color: #f8fafc;
+  min-height: 100vh;
+}
+.glass-nav {
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
+}
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+.card-title { letter-spacing: .3px; }
+.progress-bar { transition: width .9s ease; }
+.btn-primary, .btn-success { box-shadow: 0 8px 18px rgba(0, 216, 255, 0.25); }

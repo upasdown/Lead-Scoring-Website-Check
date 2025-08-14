@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card glass-card p-4">
+  <h3 class="mb-3">Website-Check</h3>
+  <form method="post" class="row g-3">
+    <div class="col-md-10">
+      <label class="form-label">URL</label>
+      <input type="text" class="form-control" name="url" placeholder="z. B. https://example.com" value="{{ url }}" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label d-none d-md-block">&nbsp;</label>
+      <button class="btn btn-success w-100"><i class="bi bi-lightning-charge me-1"></i> Analysieren</button>
+    </div>
+  </form>
+</div>
+
+{% if report %}
+<div class="row mt-4 g-4">
+  <div class="col-lg-8">
+    <div class="card glass-card p-4">
+      <h5 class="mb-3"><i class="bi bi-activity me-2"></i>Gesamtbewertung</h5>
+      <div class="progress mb-2" style="height: 14px;">
+        <div class="progress-bar bg-{% if report.overall_score>=80 %}success{% elif report.overall_score>=60 %}warning{% else %}danger{% endif %}"
+             role="progressbar" style="width: {{ report.overall_score }}%;"></div>
+      </div>
+      <p class="mb-0 display-6">{{ report.overall_score }}</p>
+      <small class="text-muted">Score (0–100)</small>
+    </div>
+
+    <div class="card glass-card p-4 mt-4">
+      <h5 class="mb-3"><i class="bi bi-search me-2"></i>SEO Basics</h5>
+      <div class="mb-2"><strong>Title:</strong> {{ report.seo.title or '—' }}</div>
+      <div class="mb-2"><strong>Meta Description:</strong> {{ report.seo.meta_description or '—' }}</div>
+      <div class="mb-2"><strong>H1 Count:</strong> {{ report.seo.h1_count }}</div>
+      <div class="progress mb-2" style="height: 10px;">
+        <div class="progress-bar bg-info" style="width: {{ report.seo.seo_score }}%;"></div>
+      </div>
+      <small class="text-muted">SEO Score: {{ report.seo.seo_score }}/100</small>
+    </div>
+
+    <div class="card glass-card p-4 mt-4">
+      <h5 class="mb-3"><i class="bi bi-speedometer2 me-2"></i>Performance</h5>
+      <ul class="mb-2">
+        <li>Antwortzeit: {{ report.metrics.response_time_s }}s</li>
+        <li>HTML-Größe: {{ report.metrics.html_size_kb }} KB</li>
+        <li>Bilder: {{ report.metrics.images_total }} (Alt-Texte: {{ report.metrics.images_alt_pct }}%)</li>
+      </ul>
+      <div class="progress mb-2" style="height: 10px;">
+        <div class="progress-bar bg-warning" style="width: {{ report.performance.perf_score }}%;"></div>
+      </div>
+      <small class="text-muted">Performance Score: {{ report.performance.perf_score }}/100</small>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card glass-card p-4 h-100">
+      <h5 class="mb-3"><i class="bi bi-tools me-2"></i>Konkrete Empfehlungen</h5>
+      {% if report.suggestions %}
+        <ol>
+          {% for s in report.suggestions %}<li class="mb-2">{{ s }}</li>{% endfor %}
+        </ol>
+      {% else %}
+        <p>Alles im grünen Bereich ✅</p>
+      {% endif %}
+      <hr>
+      <button class="btn btn-outline-light w-100" onclick="exportReport()">Export als JSON</button>
+      <script>
+        function exportReport(){
+          const data = {{ report|tojson }};
+          const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url; a.download = "website_report.json"; a.click();
+          URL.revokeObjectURL(url);
+        }
+      </script>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

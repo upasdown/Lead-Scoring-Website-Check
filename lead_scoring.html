@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card glass-card p-4">
+  <h3 class="mb-3">Lead-Scoring</h3>
+  <form method="post" class="row g-3">
+    <div class="col-md-5">
+      <label class="form-label">Branche</label>
+      <input type="text" class="form-control" name="industry" placeholder="z. B. Steuerberater" value="{{ industry }}" required>
+    </div>
+    <div class="col-md-5">
+      <label class="form-label">Stadt</label>
+      <input type="text" class="form-control" name="city" placeholder="z. B. Berlin" value="{{ city }}" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Anzahl</label>
+      <input type="number" class="form-control" name="count" min="3" max="20" value="8">
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary"><i class="bi bi-magic me-1"></i> Leads generieren</button>
+    </div>
+  </form>
+</div>
+
+{% if results %}
+<div class="mt-4">
+  <div class="row g-4">
+    {% for lead in results %}
+    <div class="col-md-6">
+      <div class="card glass-card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title mb-0">{{ lead.name }}</h5>
+            <span class="badge bg-{{ lead.score_color }} px-3 py-2">Score: {{ lead.score }}</span>
+          </div>
+          <p class="small text-muted mb-2"><i class="bi bi-globe-europe-africa me-1"></i>{{ lead.domain }}</p>
+          <div class="progress mb-3" style="height: 10px;">
+            <div class="progress-bar bg-{{ lead.score_color }}" role="progressbar"
+                 style="width: {{ lead.score }}%;" aria-valuenow="{{ lead.score }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <ul class="small">
+            {% for r in lead.reasons %}<li>{{ r }}</li>{% endfor %}
+          </ul>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-light btn-sm" onclick="copyText(this)" data-text="{{ lead.email|e }}"><i class="bi bi-clipboard-check me-1"></i> E-Mail kopieren</button>
+            <a class="btn btn-outline-primary btn-sm" href="mailto:?subject=Anfrage&body={{ lead.email|urlencode }}"><i class="bi bi-envelope me-1"></i> Mail öffnen</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}
